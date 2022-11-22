@@ -1,7 +1,7 @@
 import { List } from './list';
 import { SearchPanel } from './search-panel';
 import React, { useState } from 'react';
-import { useDebounce, useMount } from 'utils';
+import { useDebounce } from 'utils';
 import styled from '@emotion/styled';
 
 import { Typography } from 'antd';
