@@ -14,7 +14,7 @@ export const http = async (endpoint: string, { data, token, headers, ...customCo
         method: 'GET',
         headers: {
             Authorization: token ? `Bearer ${token}` : '',
-            'Content-Type': data ? 'application' : '',
+            'Content-Type': data ? 'application/json' : '',
         },
         ...customConfig,
     };
