@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useReducer, useState } from 'react';
 import { useMountedRef } from 'utils';
 
 interface State<D> {
@@ -16,31 +16,37 @@ const defaultConfig = {
     throwOnError: false,
 };
 
+const useSefaDispatch = <T>(dispatch: (...args: T[]) => void) => {
+    const mountedRef = useMountedRef();
+
+    return useCallback((...args: T[]) => (mountedRef.current ? dispatch(...args) : void 0), [dispatch, mountedRef]);
+};
+
 export const useAsync = <D>(initialState?: State<D>, initialConfig?: typeof defaultConfig) => {
     const config = { ...defaultConfig, ...initialConfig };
-    const [state, setState] = useState<State<D>>({
+    const [state, dispatch] = useReducer((state: State<D>, action: Partial<State<D>>) => ({ ...state, ...action }), {
         ...defaultInitialState,
         ...initialState,
     });
-    const mountedRef = useMountedRef();
+    const sefaDispatch = useSefaDispatch(dispatch);
     const [retry, setRetry] = useState(() => () => {});
     const setData = useCallback(
         (data: D) =>
-            setState({
+            sefaDispatch({
                 data,
                 stat: 'success',
                 error: null,
             }),
-        [],
+        [sefaDispatch],
     );
     const SetError = useCallback(
         (error: Error) =>
-            setState({
+            sefaDispatch({
                 error,
                 stat: 'error',
                 data: null,
             }),
-        [],
+        [sefaDispatch],
     );
 
     //run用来处罚异步请求
@@ -54,10 +60,10 @@ export const useAsync = <D>(initialState?: State<D>, initialConfig?: typeof defa
                     run(runConfig?.retry(), runConfig);
                 }
             });
-            setState((prevState) => ({ ...prevState, stat: 'loading' }));
+            sefaDispatch({ stat: 'loading' });
             return promise
                 .then((data) => {
-                    if (mountedRef.current) setData(data);
+                    setData(data);
                     return data;
                 })
                 .catch((error) => {
@@ -67,7 +73,7 @@ export const useAsync = <D>(initialState?: State<D>, initialConfig?: typeof defa
                     return error;
                 });
         },
-        [config.throwOnError, mountedRef, setData, SetError],
+        [config.throwOnError, setData, SetError, sefaDispatch],
     );
 
     return {
