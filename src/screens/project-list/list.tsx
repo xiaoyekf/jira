@@ -7,8 +7,6 @@ import { Pin } from 'components/pin';
 import { useDeleteProject, useEditProject } from 'utils/project';
 import { ButtonNoPadding } from 'components/lib';
 import { useProjectModal, useProjectQueryKey } from './util';
-import { Content } from 'antd/lib/layout/layout';
-import { useDeleteConfig } from 'utils/use-optimistic-options';
 
 export interface Project {
     id: number;
