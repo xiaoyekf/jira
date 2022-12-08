@@ -20,9 +20,10 @@ interface ListProps extends TableProps<Project> {
     users: User[];
 }
 export const List = ({ users, ...props }: ListProps) => {
-    const { open } = useProjectModal();
+    const { starEdit } = useProjectModal();
     const { mutate } = useEditProject();
     const pinProject = (id: number) => (pin: boolean) => mutate({ id, pin });
+    const editPtoject = (id: number) => () => starEdit(id);
     return (
         <Table
             pagination={false}
@@ -62,9 +63,10 @@ export const List = ({ users, ...props }: ListProps) => {
                             <Dropdown
                                 overlay={
                                     <Menu>
-                                        <Menu.Item key={'edit'} onClick={open}>
+                                        <Menu.Item key={'edit'} onClick={editPtoject(project.id)}>
                                             编辑
                                         </Menu.Item>
+                                        <Menu.Item key={'delete'}>删除</Menu.Item>
                                     </Menu>
                                 }
                             >
