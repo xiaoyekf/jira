@@ -40,7 +40,7 @@ export const useDeleteProject = (queryKey: QueryKey) => {
     return useMutation(
         ({ id }: { id: number }) =>
             client(`projects/${id}`, {
-                method: 'DELET',
+                method: 'DELETE',
             }),
         useDeleteConfig(queryKey),
     );
