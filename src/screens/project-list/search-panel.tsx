@@ -2,16 +2,9 @@ import { Form, Select } from 'antd';
 import Input from 'antd/lib/input/Input';
 import { UserSelect } from 'components/user-select';
 import React from 'react';
-import { Project } from './list';
+import { Project } from 'types/project';
+import { User } from 'types/user';
 
-export interface User {
-    id: number;
-    name: string;
-    email: string;
-    title: string;
-    organization: string;
-    token: string;
-}
 interface SearchPanelProps {
     users: User[];
     param: Partial<Pick<Project, 'name' | 'personId'>>;
