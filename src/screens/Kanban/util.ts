@@ -8,3 +8,13 @@ export const useProjectIdInUrl = () => {
 };
 
 export const useProjectInUrl = () => useProject(useProjectIdInUrl());
+
+export const useKanbanSearch = () => ({ projectId: useProjectIdInUrl() });
+
+export const useKanbanQuery = () => ['kanbans', useKanbanSearchParams()];
+
+export const useKanbanSearchParams = () => ({ projectId: useProjectIdInUrl() });
+
+export const useTasksQuery = () => ['tasks', useTasksSearchParams()];
+
+export const useTasksSearchParams = () => ({ projectId: useProjectIdInUrl() });
