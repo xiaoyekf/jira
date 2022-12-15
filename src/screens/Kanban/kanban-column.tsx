@@ -6,6 +6,7 @@ import { useTaskTypes } from 'utils/task-type';
 import { useTasksSearchParams } from './util';
 import taskIcon from 'assets/task.svg';
 import bugIcon from 'assets/bug.svg';
+import { Card } from 'antd';
 
 const TaskTypeIcon = ({ id }: { id: number }) => {
     const { data: taskTypes } = useTaskTypes();
@@ -13,7 +14,7 @@ const TaskTypeIcon = ({ id }: { id: number }) => {
     if (!name) {
         return null;
     }
-    return <img src={name === 'task' ? taskIcon : bugIcon} />;
+    return <img src={name === 'task' ? taskIcon : bugIcon} style={{ width: '1.6rem' }} />;
 };
 
 export const KanbanColumn = ({ kanban }: { kanban: Kanban }) => {
@@ -22,18 +23,35 @@ export const KanbanColumn = ({ kanban }: { kanban: Kanban }) => {
     return (
         <div>
             <h3>{kanban.name}</h3>
-            <Contioner>
-                {tasks?.map((task) => (
-                    <div key={task.id}>
-                        {task.name}
-                        <TaskTypeIcon id={task.typeId} />
-                    </div>
-                ))}
-            </Contioner>
+            <TaskContainer>
+                <Contioner>
+                    {tasks?.map((task) => (
+                        <Card style={{ marginBottom: '0.5rem' }} key={task.id}>
+                            <div>{task.name}</div>
+                            <TaskTypeIcon id={task.typeId} />
+                        </Card>
+                    ))}
+                </Contioner>
+            </TaskContainer>
         </div>
     );
 };
 
 const Contioner = styled.div`
-    margin-right: 3rem;
+    min-width: 27rem;
+    border-radius: 6px;
+    background-color: rgb(244, 245, 247);
+    display: flex;
+    flex-direction: column;
+    margin-right: 1.5rem;
+    padding: 0.7rem 0.7rem 1rem;
+`;
+
+const TaskContainer = styled.div`
+    overflow: scroll;
+    flex: 1;
+
+    ::-webkit-scrollbar {
+        display: none;
+    }
 `;
