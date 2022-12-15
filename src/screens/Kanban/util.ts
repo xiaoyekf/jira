@@ -3,7 +3,7 @@ import { useProject } from 'utils/project';
 
 export const useProjectIdInUrl = () => {
     const { pathname } = useLocation();
-    const id = pathname.match(/projects\/(d+)/)?.[1];
+    const id = pathname.match(/projects\/(\d+)/)?.[1];
     return Number(id);
 };
 
