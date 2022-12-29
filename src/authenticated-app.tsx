@@ -86,6 +86,8 @@ const Header = styled(Row)`
 
 const Main = styled.main`
     height: calc(100vh - 6rem);
+    display: flex;
+    overflow: hidden;
 `;
 
 const HeaderLeft = styled(Row)``;
