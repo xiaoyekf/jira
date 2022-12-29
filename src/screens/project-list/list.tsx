@@ -1,24 +1,26 @@
-import { Dropdown, Menu, Modal, Table, TableProps } from 'antd';
-import dayjs from 'dayjs';
 import React from 'react';
-
+import { Dropdown, Menu, Modal, Table } from 'antd';
+import dayjs from 'dayjs';
+import { TableProps } from 'antd/es/table';
+// react-router 和 react-router-dom的关系，类似于 react 和 react-dom/react-native/react-vr...
 import { Link } from 'react-router-dom';
 import { Pin } from 'components/pin';
 import { useDeleteProject, useEditProject } from 'utils/project';
 import { ButtonNoPadding } from 'components/lib';
-import { useProjectModal, useProjectQueryKey } from './util';
+import { useProjectModal, useProjectsQueryKey } from 'screens/project-list/util';
 import { Project } from 'types/project';
 import { User } from 'types/user';
 
 interface ListProps extends TableProps<Project> {
     users: User[];
 }
-export const List = ({ users, ...props }: ListProps) => {
-    const { mutate } = useEditProject(useProjectQueryKey());
-    const pinProject = (id: number) => (pin: boolean) => mutate({ id, pin });
 
+export const List = ({ users, ...props }: ListProps) => {
+    const { mutate } = useEditProject(useProjectsQueryKey());
+    const pinProject = (id: number) => (pin: boolean) => mutate({ id, pin });
     return (
         <Table
+            rowKey={'id'}
             pagination={false}
             columns={[
                 {
@@ -62,12 +64,12 @@ export const List = ({ users, ...props }: ListProps) => {
 };
 
 const More = ({ project }: { project: Project }) => {
-    const { starEdit } = useProjectModal();
-    const editProject = (id: number) => () => starEdit(id);
-    const { mutate: deleteProject } = useDeleteProject(useProjectQueryKey());
+    const { startEdit } = useProjectModal();
+    const editProject = (id: number) => () => startEdit(id);
+    const { mutate: deleteProject } = useDeleteProject(useProjectsQueryKey());
     const confirmDeleteProject = (id: number) => {
         Modal.confirm({
-            title: '确定删除这个项目吗？',
+            title: '确定删除这个项目吗?',
             content: '点击确定删除',
             okText: '确定',
             onOk() {
@@ -79,10 +81,10 @@ const More = ({ project }: { project: Project }) => {
         <Dropdown
             overlay={
                 <Menu>
-                    <Menu.Item key={'edit'} onClick={editProject(project.id)}>
+                    <Menu.Item onClick={editProject(project.id)} key={'edit'}>
                         编辑
                     </Menu.Item>
-                    <Menu.Item key={'delete'} onClick={() => confirmDeleteProject(project.id)}>
+                    <Menu.Item onClick={() => confirmDeleteProject(project.id)} key={'delete'}>
                         删除
                     </Menu.Item>
                 </Menu>

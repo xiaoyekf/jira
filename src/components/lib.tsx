@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
+import React from 'react';
 import { Button, Spin, Typography } from 'antd';
 import { DevTools } from 'jira-dev-tool';
-import React from 'react';
 
 export const Row = styled.div<{
     gap?: number | boolean;
@@ -12,6 +12,7 @@ export const Row = styled.div<{
     align-items: center;
     justify-content: ${(props) => (props.between ? 'space-between' : undefined)};
     margin-bottom: ${(props) => props.marginBottom + 'rem'};
+
     > * {
         margin-top: 0 !important;
         margin-bottom: 0 !important;
@@ -40,7 +41,7 @@ export const FullPageErrorFallback = ({ error }: { error: Error | null }) => (
     </FullPage>
 );
 
-//类型守卫
+// 类型守卫
 const isError = (value: any): value is Error => value?.message;
 
 export const ErrorBox = ({ error }: { error: unknown }) => {

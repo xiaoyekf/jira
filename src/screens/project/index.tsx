@@ -1,18 +1,18 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Routes, Route, useLocation } from 'react-router';
-import { KanbanScreen } from 'screens/Kanban';
-import { EpicScreen } from 'screens/Epic';
+import { Route, Routes, useLocation } from 'react-router';
+import { KanbanScreen } from 'screens/kanban';
+import { EpicScreen } from 'screens/epic';
 import styled from '@emotion/styled';
 import { Menu } from 'antd';
 
-const useRoutetype = () => {
+const useRouteType = () => {
     const units = useLocation().pathname.split('/');
     return units[units.length - 1];
 };
 
 export const ProjectScreen = () => {
-    const routeType = useRoutetype();
+    const routeType = useRouteType();
     return (
         <Container>
             <Aside>
@@ -27,7 +27,9 @@ export const ProjectScreen = () => {
             </Aside>
             <Main>
                 <Routes>
+                    {/*projects/:projectId/kanban*/}
                     <Route path={'kanban'} element={<KanbanScreen />} />
+                    {/*projects/:projectId/epic*/}
                     <Route path={'epic'} element={<EpicScreen />} />
                     <Route index element={<KanbanScreen />} />
                 </Routes>
@@ -37,18 +39,18 @@ export const ProjectScreen = () => {
 };
 
 const Aside = styled.aside`
-    background-color: rgba (244, 245, 247);
+    background-color: rgb(244, 245, 247);
     display: flex;
 `;
 
 const Main = styled.div`
-    display: flex;
     box-shadow: -5px 0 5px -5px rgba(0, 0, 0, 0.1);
+    display: flex;
     overflow: hidden;
 `;
 
 const Container = styled.div`
     display: grid;
     grid-template-columns: 16rem 1fr;
-    overflow: hidden;
+    width: 100%;
 `;

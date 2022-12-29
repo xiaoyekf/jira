@@ -1,7 +1,7 @@
-import { Button, Card, Divider, Typography } from 'antd';
 import React, { useState } from 'react';
-import { LoginScreen } from './login';
-import { RegisterScreen } from './register';
+import { RegisterScreen } from 'unauthenticated-app/register';
+import { LoginScreen } from 'unauthenticated-app/login';
+import { Button, Card, Divider } from 'antd';
 import styled from '@emotion/styled';
 import logo from 'assets/logo.svg';
 import left from 'assets/left.svg';
@@ -9,11 +9,12 @@ import right from 'assets/right.svg';
 import { useDocumentTitle } from 'utils';
 import { ErrorBox } from 'components/lib';
 
-export const UnauthenticatedApp = () => {
+export default function UnauthenticatedApp() {
     const [isRegister, setIsRegister] = useState(false);
     const [error, setError] = useState<Error | null>(null);
 
-    useDocumentTitle('请登录');
+    useDocumentTitle('请登录注册以继续');
+
     return (
         <Container>
             <Header />
@@ -21,16 +22,15 @@ export const UnauthenticatedApp = () => {
             <ShadowCard>
                 <Title>{isRegister ? '请注册' : '请登录'}</Title>
                 <ErrorBox error={error} />
-
                 {isRegister ? <RegisterScreen onError={setError} /> : <LoginScreen onError={setError} />}
                 <Divider />
                 <Button type={'link'} onClick={() => setIsRegister(!isRegister)}>
-                    {isRegister ? '已经有账号？直接登录咯' : '什么？还没账号？火速注册！'}
+                    {isRegister ? '已经有账号了？直接登录' : '没有账号？注册新账号'}
                 </Button>
             </ShadowCard>
         </Container>
     );
-};
+}
 
 export const LongButton = styled(Button)`
     width: 100%;
@@ -38,7 +38,7 @@ export const LongButton = styled(Button)`
 
 const Title = styled.h2`
     margin-bottom: 2.4rem;
-    color: rgba(94, 108, 132);
+    color: rgb(94, 108, 132);
 `;
 
 const Background = styled.div`
@@ -65,7 +65,7 @@ const ShadowCard = styled(Card)`
     padding: 3.2rem 4rem;
     border-radius: 0.3rem;
     box-sizing: border-box;
-    box-shadow: rgba(0, 0, 0, 0.1) 0 0 1rem;
+    box-shadow: rgba(0, 0, 0, 0.1) 0 0 10px;
     text-align: center;
 `;
 

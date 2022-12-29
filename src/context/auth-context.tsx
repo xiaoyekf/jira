@@ -1,12 +1,11 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useCallback } from 'react';
 import * as auth from 'auth-provider';
-
 import { http } from 'utils/http';
 import { useMount } from 'utils';
 import { useAsync } from 'utils/use-async';
 import { FullPageErrorFallback, FullPageLoading } from 'components/lib';
-import { useQueryClient } from 'react-query';
 import { User } from 'types/user';
+import { useQueryClient } from 'react-query';
 
 interface AuthForm {
     username: string;
@@ -37,19 +36,26 @@ AuthContext.displayName = 'AuthContext';
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const { data: user, error, isLoading, isIdle, isError, run, setData: setUser } = useAsync<User | null>();
     const queryClient = useQueryClient();
+
+    // point free
     const login = (form: AuthForm) => auth.login(form).then(setUser);
     const register = (form: AuthForm) => auth.register(form).then(setUser);
     const logout = () =>
-        auth.logout().then((user) => {
-            setUser(null), queryClient.clear;
+        auth.logout().then(() => {
+            setUser(null);
+            queryClient.clear();
         });
 
-    useMount(() => {
-        run(bootstrapUser());
-    });
+    useMount(
+        useCallback(() => {
+            run(bootstrapUser());
+        }, []),
+    );
+
     if (isIdle || isLoading) {
         return <FullPageLoading />;
     }
+
     if (isError) {
         return <FullPageErrorFallback error={error} />;
     }

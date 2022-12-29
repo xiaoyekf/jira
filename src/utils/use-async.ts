@@ -1,5 +1,5 @@
 import { useCallback, useReducer, useState } from 'react';
-import { useMountedRef } from 'utils';
+import { useMountedRef } from 'utils/index';
 
 interface State<D> {
     error: Error | null;
@@ -12,13 +12,13 @@ const defaultInitialState: State<null> = {
     data: null,
     error: null,
 };
+
 const defaultConfig = {
     throwOnError: false,
 };
 
-const useSefaDispatch = <T>(dispatch: (...args: T[]) => void) => {
+const useSafeDispatch = <T>(dispatch: (...args: T[]) => void) => {
     const mountedRef = useMountedRef();
-
     return useCallback((...args: T[]) => (mountedRef.current ? dispatch(...args) : void 0), [dispatch, mountedRef]);
 };
 
@@ -28,52 +28,56 @@ export const useAsync = <D>(initialState?: State<D>, initialConfig?: typeof defa
         ...defaultInitialState,
         ...initialState,
     });
-    const sefaDispatch = useSefaDispatch(dispatch);
+    const safeDispatch = useSafeDispatch(dispatch);
+    // useState直接传入函数的含义是：惰性初始化；所以，要用useState保存函数，不能直接传入函数
+    // https://codesandbox.io/s/blissful-water-230u4?file=/src/App.js
     const [retry, setRetry] = useState(() => () => {});
+
     const setData = useCallback(
         (data: D) =>
-            sefaDispatch({
+            safeDispatch({
                 data,
                 stat: 'success',
                 error: null,
             }),
-        [sefaDispatch],
+        [safeDispatch],
     );
-    const SetError = useCallback(
+
+    const setError = useCallback(
         (error: Error) =>
-            sefaDispatch({
+            safeDispatch({
                 error,
                 stat: 'error',
                 data: null,
             }),
-        [sefaDispatch],
+        [safeDispatch],
     );
 
-    //run用来处罚异步请求
+    // run 用来触发异步请求
     const run = useCallback(
         (promise: Promise<D>, runConfig?: { retry: () => Promise<D> }) => {
             if (!promise || !promise.then) {
-                throw new Error('请传入 promise 类型数据');
+                throw new Error('请传入 Promise 类型数据');
             }
             setRetry(() => () => {
                 if (runConfig?.retry) {
                     run(runConfig?.retry(), runConfig);
                 }
             });
-            sefaDispatch({ stat: 'loading' });
+            safeDispatch({ stat: 'loading' });
             return promise
                 .then((data) => {
                     setData(data);
                     return data;
                 })
                 .catch((error) => {
-                    //catch会消化异常 如果不主动抛出 外面接受不到异常
-                    SetError(error);
+                    // catch会消化异常，如果不主动抛出，外面是接收不到异常的
+                    setError(error);
                     if (config.throwOnError) return Promise.reject(error);
                     return error;
                 });
         },
-        [config.throwOnError, setData, SetError, sefaDispatch],
+        [config.throwOnError, setData, setError, safeDispatch],
     );
 
     return {
@@ -83,7 +87,8 @@ export const useAsync = <D>(initialState?: State<D>, initialConfig?: typeof defa
         isSuccess: state.stat === 'success',
         run,
         setData,
-        SetError,
+        setError,
+        // retry 被调用时重新跑一遍run，让state刷新一遍
         retry,
         ...state,
     };

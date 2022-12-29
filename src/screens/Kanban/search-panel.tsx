@@ -1,10 +1,10 @@
 import React from 'react';
+import { useTasksSearchParams } from 'screens/kanban/util';
 import { useSetUrlSearchParam } from 'utils/url';
 import { Row } from 'components/lib';
 import { Button, Input } from 'antd';
 import { UserSelect } from 'components/user-select';
 import { TaskTypeSelect } from 'components/task-type-select';
-import { useTasksSearchParams } from './util';
 
 export const SearchPanel = () => {
     const searchParams = useTasksSearchParams();
@@ -36,7 +36,7 @@ export const SearchPanel = () => {
                 value={searchParams.typeId}
                 onChange={(value) => setSearchParams({ typeId: value })}
             />
-            <Button onClick={reset}>清楚筛选器</Button>
+            <Button onClick={reset}>清除筛选器</Button>
         </Row>
     );
 };

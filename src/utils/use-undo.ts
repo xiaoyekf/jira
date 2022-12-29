@@ -1,4 +1,4 @@
-import { useCallback, useReducer, useState } from 'react';
+import { useCallback, useReducer } from 'react';
 
 const UNDO = 'UNDO';
 const REDO = 'REDO';
@@ -11,32 +11,42 @@ type State<T> = {
     future: T[];
 };
 
-type Action<T> = { newPresent?: T; type: typeof UNDO | typeof REDO | typeof SET | typeof RESET };
+type Action<T> = {
+    newPresent?: T;
+    type: typeof UNDO | typeof REDO | typeof SET | typeof RESET;
+};
 
 const undoReducer = <T>(state: State<T>, action: Action<T>) => {
     const { past, present, future } = state;
-    const { type, newPresent } = action;
+    const { newPresent } = action;
+
     switch (action.type) {
         case UNDO: {
             if (past.length === 0) return state;
+
             const previous = past[past.length - 1];
             const newPast = past.slice(0, past.length - 1);
+
             return {
                 past: newPast,
                 present: previous,
                 future: [present, ...future],
             };
         }
+
         case REDO: {
             if (future.length === 0) return state;
+
             const next = future[0];
             const newFuture = future.slice(1);
+
             return {
                 past: [...past, present],
                 present: next,
                 future: newFuture,
             };
         }
+
         case SET: {
             if (newPresent === present) {
                 return state;
@@ -47,6 +57,7 @@ const undoReducer = <T>(state: State<T>, action: Action<T>) => {
                 future: [],
             };
         }
+
         case RESET: {
             return {
                 past: [],
